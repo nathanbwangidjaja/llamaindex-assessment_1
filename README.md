@@ -110,11 +110,7 @@ server/schema/extractionSchema.json
 
 You **must** load this in your backend before extraction.  
 It defines the shape of the expected JSON
-```
 
-The **frontend’s `DataDisplay`** expects this structure.  
-
----
 
 ## Getting Started
 
