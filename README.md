@@ -1,176 +1,186 @@
 # LlamaIndex Assessment – Insurance Document Processor
 
-This project is the **starting point** for your assessment. It demonstrates the overall structure of an insurance document processor application, but **key functionality has been removed**.  
+This project is the **starting point** for your assessment. It demonstrates the overall structure of an insurance document processor application, but key functionality has been removed.
+You are given a **frontend (React)** and a **backend (Node.js/Express)** scaffold.  
+Your task is to **complete the missing functionality** so that a user can:
 
-Your task is to **implement both frontend and backend parts** so that users can upload documents, process them with **LlamaParse + LlamaExtract**, and display the structured results.
+1. Upload an insurance document (PDF/DOCX/PPTX).  
+2. Process it with **LlamaParse → LlamaExtract**.  
+3. Display the extracted structured JSON on the frontend.
+
+Most of the heavy lifting is left for you to implement — this README will walk you through exactly **what you have**, **what’s missing**, and **what you must do**.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
-Here’s what you’ll find in the repo:
+```
+.
+├── server/
+│   ├── index.js                 # Backend Express server (incomplete, you must finish)
+│   ├── schema/
+│   │   └── extractionSchema.json # JSON Schema you will use for extraction
+│   └── uploads/                 # Temp upload folder (auto-created)
+│
+├── src/
+│   ├── App.jsx                  # Frontend entry point
+│   ├── components/
+│   │   ├── DocumentUpload.jsx   # Stub: implement drag/drop + file picker
+│   │   └── DataDisplay.jsx      # Stub: implement structured JSON display
+│   └── App.css                  # Basic global styles
+│
+├── package.json
+└── insurance_document.pdf       # Test insurance document
+
+```
+
+---
+
+## Backend (`server/index.js`)
+
+The backend is a **minimal Express server**.  
+
+It currently:
+- Sets up `/api/process` route (but just returns “Not Implemented”).  
+- Accepts file uploads via `multer`.  
+- Leaves **TODOs** for you to complete the pipeline:
+  - **LlamaParse**: upload → poll → fetch Markdown.  
+  - **Files API** (if needed): upload parsed text.  
+  - **LlamaExtract**: start extraction job with schema.  
+  - Poll extraction → normalize results → return JSON.  
+
+### What you must implement:
+- Read the schema JSON:
+  ```js
+  // TODO[schema-1]
+  extractionSchema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'))
+  ```
+- `/api/process` route:
+  - Upload file → LlamaParse → wait for parse → get Markdown.
+  - Upload Markdown (if required by tenant).
+  - Start LlamaExtract job with `insurance.schema.json`.
+  - Poll until SUCCESS.
+  - Normalize the result (`result | data | results[0].result | download_url`).
+  - Return:  
+    ```json
+    { "ok": true, "extractedData": { ...matches schema... } }
+    ```
+
+**Important:** No LlamaIndex API endpoints are provided.  
+You must look them up in [LlamaCloud Docs](https://docs.cloud.llamaindex.ai/) and implement calls yourself.
+
+---
+
+## Frontend (`src/`)
+
+The frontend is built with React + Vite.  
+Currently, it has **stub components** that you must finish.
 
 ### `src/App.jsx`
-- **Entry point of the app**
-- Handles overall state (`uploadedFile`, `processing`, `error`, `extractedData`)
-- Contains `handleFileUpload` stub, which you must connect to your backend
-- Renders two main sections:
-  - **Document Upload** (left column)
-  - **Extracted Data** (right column)
+- Holds main app state:
+  - `uploadedFile`, `processing`, `error`, `extractedData`.
+- Has a stub `handleFileUpload(file)` → you must connect it to your backend (`POST /api/process`).
 
 ### `src/components/DocumentUpload.jsx`
-- **Stub component**  
-- Candidates must implement:
-  - Drag-and-drop file upload
-  - File type & size validation
-  - Click-to-browse file picker
-  - Progress state & success state
-- Call `onFileUpload(file)` when a file is selected
+- UI for uploading files.
+- Must implement:
+  - Drag-and-drop.
+  - Click-to-browse.
+  - File validation (PDF/DOCX/PPTX, ≤10 MB).
+  - Show upload progress + success state.
+- Calls `onFileUpload(file)` when ready.
 
 ### `src/components/DataDisplay.jsx`
-- **Stub component**  
-- Candidates must implement:
-  - Loading state
-  - Error state
-  - Display extracted JSON data in a structured, styled layout
-- JSON schema provided below
-
-### `src/App.css`
-- Basic global styles
-- You can extend with your own Tailwind / custom classes
+- UI for showing backend results.
+- Must implement:
+  - Loading state.
+  - Error state.
+  - Render extracted JSON nicely (tables, cards, etc.).
+- Input: `extractedData` that matches the schema.
 
 ---
 
-## 🛠 Features You Must Implement
+## JSON Schema
 
-### Frontend
-- Drag-and-drop + click-to-browse file upload  
-- File validation: only **PDF, DOCX, PPTX**, max **10 MB**  
-- Progress tracking (showing upload/processing state)  
-- Error handling (bad file, failed API, etc.)  
-- Structured data visualization in `DataDisplay`  
+The schema lives at:
 
-### Backend
-- API endpoint(s) to:
-  1. Accept file upload (direct upload or presigned URL approach)
-  2. Call **LlamaParse** to parse the document
-  3. Call **LlamaExtract** to extract structured information
-  4. Return JSON in the expected schema
-- Optional: Save results to a database (e.g., Supabase)
-
----
-
-## 📦 Expected JSON Schema
-
-Your backend should return extracted data in this format:
-
-```json
-{
-  "policy_holder_info": {
-    "name": "string",
-    "address": "string",
-    "date_of_birth": "string",
-    "policy_number": "string"
-  },
-  "insurance_details": {
-    "type": "string",
-    "coverage_amount": "number",
-    "start_date": "string",
-    "end_date": "string",
-    "premium": {
-      "amount": "number",
-      "frequency": "string"
-    }
-  },
-  "covered_items": [
-    {
-      "item_name": "string",
-      "description": "string",
-      "value": "number"
-    }
-  ],
-  "education": {
-    "school": "string",
-    "degree": "string",
-    "graduation_year": "number"
-  },
-  "attributes": [
-    {
-      "key": "string",
-      "value": "string"
-    }
-  ]
-}
+```
+server/schema/extractionSchema.json
 ```
 
+You **must** load this in your backend before extraction.  
+It defines the shape of the expected JSON
+```
+
+The **frontend’s `DataDisplay`** expects this structure.  
+
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### Prerequisites
-- Node.js 18+
-- pnpm (recommended) or npm
-
-### Installation
+### 1. Install dependencies
 ```bash
-# Clone repo & install deps
+# in project root
 pnpm install
+```
 
-# Start dev server
+### 2. Start backend
+```bash
+cd server
+node index.js
+```
+Runs at `http://localhost:4000`.
+
+### 3. Start frontend
+```bash
 pnpm run dev --host
 ```
-
-Visit `http://localhost:5173`
-
----
-
-## ✅ Assessment Requirements
-
-### Core Functionality
-- Implement **file upload** flow (frontend + backend)
-- Integrate **LlamaParse + LlamaExtract**
-- Display structured data with responsive UI
-- Handle errors & edge cases gracefully
-
-### Evaluation Criteria
-1. **Technical Implementation (40%)**  
-   - Working frontend uploader  
-   - Working backend API routes  
-   - Correct integration with LlamaIndex services  
-
-2. **Code Quality (25%)**  
-   - Clean, modular React components  
-   - Clear backend code organization  
-   - Proper error handling  
-
-3. **LlamaIndex Usage (20%)**  
-   - Effective use of LlamaParse + LlamaExtract  
-   - Proper configuration  
-
-4. **Problem Solving (10%)**  
-   - How you handle edge cases  
-   - Any creative improvements  
-
-5. **Documentation (5%)**  
-   - Clear README updates  
-   - Inline code comments  
+Runs at `http://localhost:5173`.
 
 ---
 
-## 📚 Resources
+## Assessment Requirements
+
+### Core Tasks
+- Backend: Implement `/api/process` end-to-end with LlamaParse + LlamaExtract.
+- Frontend: Implement upload UI & JSON display UI.
+- Schema: Ensure extraction matches `extractionSchema.json`.
+- Testing: Use `insurance_document.pdf` for testing
+
+### Evaluation
+1. **Backend (40%)**  
+   - Correct LlamaParse + LlamaExtract pipeline  
+   - Returns JSON in schema format  
+
+2. **Frontend (30%)**  
+   - Clean file upload flow  
+   - Good error/loading states  
+   - JSON displayed clearly  
+
+3. **Code Quality (20%)**  
+   - Clear, modular code  
+   - Good error handling  
+
+4. **Documentation (10%)**  
+   - Clear commits + comments  
+   - Updated README  
+
+---
+
+## Helpful Resources
 - [LlamaIndex Docs](https://docs.llamaindex.ai/)  
-- [LlamaParse Docs](https://www.llamaindex.ai/llamaparse)
-- [LlamaExtract Docs](https://www.llamaindex.ai/llamaextract)
-- [LlamaCloud Docs](https://docs.cloud.llamaindex.ai/)  
+- [LlamaParse](https://www.llamaindex.ai/llamaparse)  
+- [LlamaExtract](https://www.llamaindex.ai/llamaextract)  
+- [LlamaCloud](https://docs.cloud.llamaindex.ai/)  
 - [React Docs](https://react.dev/)  
-- [Supabase Docs](https://supabase.com/docs)  
 
 ---
 
-## 🔑 Key Notes
-- You **must implement both frontend & backend**.  
-- The current `handleFileUpload` in `App.jsx` throws an error intentionally—replace it with your real pipeline.  
-- `DocumentUpload.jsx` and `DataDisplay.jsx` are stubs—build them out yourself.  
+## Key Notes
+- **Do not change the schema shape** 
+- The backend currently just stubs `/api/process`.  
+- You must look up the correct API endpoints from docs and implement.  
+- You are graded on: **working code, clean design, and clear problem-solving**.  
 
 ---
 
