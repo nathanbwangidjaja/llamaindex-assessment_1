@@ -117,7 +117,7 @@ It defines the shape of the expected JSON
 ### 1. Install dependencies
 ```bash
 # in project root
-pnpm install
+npm install
 ```
 
 ### 2. Start backend
@@ -129,7 +129,7 @@ Runs at `http://localhost:4000`.
 
 ### 3. Start frontend
 ```bash
-pnpm run dev --host
+npm run dev --host
 ```
 Runs at `http://localhost:5173`.
 
