@@ -1,9 +1,8 @@
-// App.jsx
 import { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Badge } from '@/components/ui/badge.jsx'
-import { Upload, FileText, Database, AlertCircle } from 'lucide-react'
+import { Upload, FileText, Database, Search, CheckCircle, AlertCircle } from 'lucide-react'
 import DocumentUpload from './components/DocumentUpload.jsx'
 import DataDisplay from './components/DataDisplay.jsx'
 import './App.css'
@@ -15,42 +14,33 @@ function App() {
   const [error, setError] = useState(null)
   const [currentStep, setCurrentStep] = useState(1)
 
-  /**
-   * Called by candidate's DocumentUpload implementation once a file is chosen.
-   * They must implement the backend endpoint(s) and call them from here.
-   */
   const handleFileUpload = async (file) => {
-    setUploadedFile(file)
-    setExtractedData(null)
-    setProcessing(true)
-    setError(null)
-    setCurrentStep(2)
+  setUploadedFile(file);
+  setExtractedData(null);
+  setProcessing(true);
+  setError(null);
 
-    try {
-      // ===== TODO =====
-      // 1) Upload the file to your backend or via presigned URL (multipart ok).
-      // 2) Trigger LlamaParse + LlamaExtract processing on the backend.
-      // 3) Poll or await the result and return structured JSON (see README schema).
-      //
-      // Example (pseudo):
-      // const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData })
-      // const { fileId } = await uploadRes.json()
-      // const parseRes = await fetch(`/api/process/${fileId}`)
-      // const result = await parseRes.json()
-      //
-      // setExtractedData(result)
+  try {
+    const form = new FormData();
+    form.append('file', file);
 
-      // Remove this throw once implemented:
-      throw new Error('Not implemented: connect frontend to your backend processing pipeline.')
+    const resp = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/process?parse_then_extract=1`,
+      { method: 'POST', body: form }
+    );
 
-      // If implemented:
-      // setCurrentStep(6)
-    } catch (err) {
-      setError(err?.message || 'Unknown error')
-    } finally {
-      setProcessing(false)
+    const data = await resp.json().catch(() => null);
+    if (!resp.ok || !data?.ok) {
+      throw new Error(data?.error || `Server error: ${resp.status}`);
     }
+
+    setExtractedData(data.extractedData);
+  } catch (e) {
+    setError(e.message || 'Upload/processing failed');
+  } finally {
+    setProcessing(false);
   }
+};
 
   const handleReset = () => {
     setUploadedFile(null)
@@ -68,7 +58,7 @@ function App() {
             LlamaIndex Insurance Document Processor
           </h1>
           <p className="text-lg text-gray-600">
-            Candidates must build the upload & extraction flow
+            Demo application for processing insurance documents with LlamaParse and LlamaExtract
           </p>
         </header>
 
@@ -85,12 +75,12 @@ function App() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DocumentUpload
+              <DocumentUpload 
                 onFileUpload={handleFileUpload}
                 disabled={processing}
                 uploadedFile={uploadedFile}
               />
-
+              
               {uploadedFile && (
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <div className="flex items-center justify-between">
@@ -134,7 +124,7 @@ function App() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DataDisplay
+              <DataDisplay 
                 extractedData={extractedData}
                 loading={processing}
                 error={error}
@@ -148,7 +138,7 @@ function App() {
           <CardHeader>
             <CardTitle>Assessment Technical Requirements</CardTitle>
             <CardDescription>
-              Candidates must implement both frontend & backend
+              This demo showcases the key components candidates should implement
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -159,27 +149,27 @@ function App() {
                 </div>
                 <h3 className="font-semibold mb-2">Frontend Implementation</h3>
                 <p className="text-sm text-gray-600">
-                  Drag-and-drop upload and responsive UI.
+                  React/Next.js with drag-and-drop file upload, progress tracking, and responsive design
                 </p>
               </div>
-
+              
               <div className="text-center">
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <FileText className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold mb-2">LlamaIndex Integration</h3>
                 <p className="text-sm text-gray-600">
-                  Use LlamaParse + LlamaExtract on the backend; return structured JSON.
+                  LlamaParse for document parsing and LlamaExtract for structured data extraction
                 </p>
               </div>
-
+              
               <div className="text-center">
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <Database className="w-6 h-6 text-purple-600" />
                 </div>
                 <h3 className="font-semibold mb-2">Backend & Database</h3>
                 <p className="text-sm text-gray-600">
-                  Build API routes for upload & processing; persist results (DB optional but encouraged).
+                  API routes for processing, database storage (Supabase), and error handling
                 </p>
               </div>
             </div>
@@ -191,3 +181,4 @@ function App() {
 }
 
 export default App
+
