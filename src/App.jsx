@@ -67,13 +67,12 @@ function App() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             LlamaIndex Insurance Document Processor
           </h1>
-          <p className="text-lg text-gray-600">
+          {/* <p className="text-lg text-gray-600">
             Candidates must build the upload & extraction flow
-          </p>
+          </p> */}
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Upload Section */}
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -122,7 +121,6 @@ function App() {
             </CardContent>
           </Card>
 
-          {/* Results Section */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -143,7 +141,6 @@ function App() {
           </Card>
         </div>
 
-        {/* Technical Information */}
         <Card className="mt-8">
           <CardHeader>
             <CardTitle>Assessment Technical Requirements</CardTitle>
@@ -184,7 +181,7 @@ function App() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   )
