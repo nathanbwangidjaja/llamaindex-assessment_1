@@ -351,106 +351,113 @@ function normalizeExtractionResult(payload) {
  *   5) Poll extraction to SUCCESS, fetch result, normalize shapes
  *   6) Return { ok: true, extractedData } to match the provided frontend
  */
-app.post('/api/process', upload.single('file'), async (req, res) => {
-  if (!LLAMA_KEY) {
-    return res.status(500).json({ ok: false, error: 'Missing LLAMACLOUD_API_KEY' })
-  }
-  if (!req.file) {
-    return res.status(400).json({ ok: false, error: 'No file uploaded or unsupported type' })
-  }
-  // TODO[schema-2]: Ensure your schema is loaded before proceeding.
-  if (!extractionSchema) {
-    return res.status(500).json({
-      ok: false,
-      error: `Extraction schema not loaded. Implement TODO[schema-1] to read ${SCHEMA_PATH}.`,
-    })
-  }
-
-  const id = req._id || reqId()
-  const { path: localPath, originalname, mimetype, size } = req.file
-  log(id, 'Received file', { originalname, mimetype, size: bytes(size) })
-
-  let tempTextPath = null
-  const cleanup = () => {
-    try { if (localPath && fs.existsSync(localPath)) fs.unlinkSync(localPath) } catch {}
-    try { if (tempTextPath && fs.existsSync(tempTextPath)) fs.unlinkSync(tempTextPath) } catch {}
-  }
-
-  try {
-    // Upload original to Files API (traceability)
-    log(id, 'Uploading original file to Files API…')
-    const origUpload = await uploadFileToFilesAPI(id, localPath, originalname, mimetype)
-    const origFileId = origUpload?.id
-    log(id, 'Starting LlamaParse upload…')
-    const parseUp = await llamaparseUpload(id, localPath, originalname, mimetype)
-    const parseJobId = parseUp?.job_id || parseUp?.id
-    if (!parseJobId) throw new Error('LlamaParse upload returned no job_id')
-    log(id, 'Polling LlamaParse job…', { job_id: parseJobId })
-    await pollParseJob(id, parseJobId)
-
-    // Fetch Markdown
-    log(id, 'Fetching parsed Markdown…')
-    const markdown = await getParseMarkdown(id, parseJobId)
-
-    // Save to temp .txt --> upload to Files API
-    tempTextPath = writeStringToTempFile(id, markdown, '.txt')
-    const textUpload = await uploadFileToFilesAPI(id, tempTextPath, path.basename(tempTextPath), 'text/plain')
-    const textFileId = textUpload?.id
-    if (!textFileId) throw new Error('Uploading parsed text to Files API failed (no id)')
-    log(id, 'Fetching default extraction agent…')
-    const agent = await getDefaultAgent(id)
-    const agentId = agent?.id
-    const projectId = agent?.project_id || LLAMA_PROJECT_ID
-    if (!agentId) throw new Error('Could not get default extraction agent')
-
-    // Start extraction
-    log(id, 'Starting extraction job on parsed text…')
-    const jobStart = await startExtractionJob(id, agentId, textFileId, extractionSchema)
-    const jobId = jobStart?.job_id || jobStart?.id
-    if (!jobId) throw new Error('Extraction job did not return job_id')
-
-    // Poll extraction
-    log(id, 'Polling extraction job…', { job_id: jobId, project_id: projectId || '(default)' })
-    await pollExtractionJob(id, jobId, projectId)
-
-    // Fetch + normalize result
-    log(id, 'Fetching extraction result…')
-    const rawResult = await getExtractionResult(id, jobId, projectId)
-    try { console.log(previewString(JSON.stringify(rawResult, null, 2), 4000)) } catch {}
-    let extractedData = normalizeExtractionResult(rawResult)
-
-    if (!extractedData && rawResult?.download_url) {
-      log(id, 'Result provided as download_url, fetching…')
-      const dl = await axios.get(rawResult.download_url, { timeout: AXIOS_TIMEOUT })
-      extractedData = normalizeExtractionResult(dl.data) ?? dl.data
-    }
-
-    if (!extractedData) {
-      throw new Error('Extraction finished but no structured data was found in result payload')
-    }
-
-    // Return result
-    log(id, 'Extraction complete. Normalized data preview:')
-    try { console.log(previewString(JSON.stringify(extractedData, null, 2), 4000)) } catch {}
-
-    return res.json({
-      ok: true,
-      mode: 'parse_then_extract_jobs',
-      original_file_id: origFileId,
-      parsed_text_file_id: textFileId,
-      extractedData,
-      // parsed_markdown: markdown,
-    })
-  } catch (err) {
-    log(id, 'Processing error', axiosErr(err))
-    return res.status(500).json({
-      ok: false,
-      error: err?.response?.data?.error || err.message || 'Unknown error',
-    })
-  } finally {
-    cleanup()
-  }
+// Placeholder for the processing endpoint
+app.post('/api/process', (_req, res) => {
+  res.status(501).json({
+    ok: false,
+    error: 'Not implemented. Please implement.'
+  })
 })
+// app.post('/api/process', upload.single('file'), async (req, res) => {
+//   if (!LLAMA_KEY) {
+//     return res.status(500).json({ ok: false, error: 'Missing LLAMACLOUD_API_KEY' })
+//   }
+//   if (!req.file) {
+//     return res.status(400).json({ ok: false, error: 'No file uploaded or unsupported type' })
+//   }
+//   // TODO[schema-2]: Ensure your schema is loaded before proceeding.
+//   if (!extractionSchema) {
+//     return res.status(500).json({
+//       ok: false,
+//       error: `Extraction schema not loaded. Implement TODO[schema-1] to read ${SCHEMA_PATH}.`,
+//     })
+//   }
+
+//   const id = req._id || reqId()
+//   const { path: localPath, originalname, mimetype, size } = req.file
+//   log(id, 'Received file', { originalname, mimetype, size: bytes(size) })
+
+//   let tempTextPath = null
+//   const cleanup = () => {
+//     try { if (localPath && fs.existsSync(localPath)) fs.unlinkSync(localPath) } catch {}
+//     try { if (tempTextPath && fs.existsSync(tempTextPath)) fs.unlinkSync(tempTextPath) } catch {}
+//   }
+
+//   try {
+//     // Upload original to Files API (traceability)
+//     log(id, 'Uploading original file to Files API…')
+//     const origUpload = await uploadFileToFilesAPI(id, localPath, originalname, mimetype)
+//     const origFileId = origUpload?.id
+//     log(id, 'Starting LlamaParse upload…')
+//     const parseUp = await llamaparseUpload(id, localPath, originalname, mimetype)
+//     const parseJobId = parseUp?.job_id || parseUp?.id
+//     if (!parseJobId) throw new Error('LlamaParse upload returned no job_id')
+//     log(id, 'Polling LlamaParse job…', { job_id: parseJobId })
+//     await pollParseJob(id, parseJobId)
+
+//     // Fetch Markdown
+//     log(id, 'Fetching parsed Markdown…')
+//     const markdown = await getParseMarkdown(id, parseJobId)
+
+//     // Save to temp .txt --> upload to Files API
+//     tempTextPath = writeStringToTempFile(id, markdown, '.txt')
+//     const textUpload = await uploadFileToFilesAPI(id, tempTextPath, path.basename(tempTextPath), 'text/plain')
+//     const textFileId = textUpload?.id
+//     if (!textFileId) throw new Error('Uploading parsed text to Files API failed (no id)')
+//     log(id, 'Fetching default extraction agent…')
+//     const agent = await getDefaultAgent(id)
+//     const agentId = agent?.id
+//     const projectId = agent?.project_id || LLAMA_PROJECT_ID
+//     if (!agentId) throw new Error('Could not get default extraction agent')
+
+//     // Start extraction
+//     log(id, 'Starting extraction job on parsed text…')
+//     const jobStart = await startExtractionJob(id, agentId, textFileId, extractionSchema)
+//     const jobId = jobStart?.job_id || jobStart?.id
+//     if (!jobId) throw new Error('Extraction job did not return job_id')
+
+//     // Poll extraction
+//     log(id, 'Polling extraction job…', { job_id: jobId, project_id: projectId || '(default)' })
+//     await pollExtractionJob(id, jobId, projectId)
+
+//     // Fetch + normalize result
+//     log(id, 'Fetching extraction result…')
+//     const rawResult = await getExtractionResult(id, jobId, projectId)
+//     try { console.log(previewString(JSON.stringify(rawResult, null, 2), 4000)) } catch {}
+//     let extractedData = normalizeExtractionResult(rawResult)
+
+//     if (!extractedData && rawResult?.download_url) {
+//       log(id, 'Result provided as download_url, fetching…')
+//       const dl = await axios.get(rawResult.download_url, { timeout: AXIOS_TIMEOUT })
+//       extractedData = normalizeExtractionResult(dl.data) ?? dl.data
+//     }
+
+//     if (!extractedData) {
+//       throw new Error('Extraction finished but no structured data was found in result payload')
+//     }
+
+//     // Return result
+//     log(id, 'Extraction complete. Normalized data preview:')
+//     try { console.log(previewString(JSON.stringify(extractedData, null, 2), 4000)) } catch {}
+
+//     return res.json({
+//       ok: true,
+//       mode: 'parse_then_extract_jobs',
+//       original_file_id: origFileId,
+//       parsed_text_file_id: textFileId,
+//       extractedData,
+//       // parsed_markdown: markdown,
+//     })
+//   } catch (err) {
+//     log(id, 'Processing error', axiosErr(err))
+//     return res.status(500).json({
+//       ok: false,
+//       error: err?.response?.data?.error || err.message || 'Unknown error',
+//     })
+//   } finally {
+//     cleanup()
+//   }
+// })
 
 /**
  * GET /api/health
