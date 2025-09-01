@@ -1,14 +1,30 @@
 # LlamaIndex Assessment – Insurance Document Processor
 
-This project is the **starting point** for your assessment. It demonstrates the overall structure of an insurance document processor application, but key functionality has been removed.
-You are given a **frontend (React)** and a **backend (Node.js/Express)** scaffold.  
-Your task is to **complete the missing functionality** so that a user can:
+Welcome! You’ve been invited to complete a real-world coding challenge designed to reflect the kind of work you might actually do on the job.
+
+This assessment is being delivered through Foretoken AI, a platform trusted by hiring teams to run realistic coding simulations.
+
+---
+
+## 📋 What You Need to Know
+
+- Your **screen and audio recording** has already started (via your browser).
+- Please **do not close or refresh the assessment tab** — doing so will stop the recording and may void your submission.
+- You may use **any AI tools** (e.g. ChatGPT, GitHub Copilot, etc.)
+- This is a **solo** exercise — no pair programming or external help allowed.
+
+If you encounter issues, contact our team at **[assessment@foretokenai.com](mailto:assessment@foretokenai.com)** immediately.
+
+---
+
+## 💻 What You’ll Work On
+
+You are given a **frontend (React)** and a **backend (Python/FastAPI)** scaffold. Your task is to **complete the missing functionality** so that a user can:
 
 1. Upload an insurance document (PDF/DOCX/PPTX).  
-2. Process it with **LlamaParse → LlamaExtract**.  
-3. Display the extracted structured JSON on the frontend.
+2. View key information extracted from the document.
 
-Most of the heavy lifting is left for you to implement — this README will walk you through exactly **what you have**, **what’s missing**, and **what you must do**.
+Most of the heavy lifting is left for you to implement — this README will walk you through exactly **what you have**, **what’s missing**, and **what you need to do**.
 
 ---
 
@@ -17,100 +33,120 @@ Most of the heavy lifting is left for you to implement — this README will walk
 ```
 .
 ├── server/
-│   ├── index.js                 # Backend Express server (incomplete, you must finish)
+│   ├── main.py                   # Backend FastAPI server (incomplete, needs you to finish)
 │   ├── schema/
-│   │   └── extractionSchema.json # JSON Schema you will use for extraction
-│   └── uploads/                 # Temp upload folder (auto-created)
+│   │   └── insurance.schema.json # JSON Schema you will use for extraction
+│   ├── (.env)                    # To be created by yourself
+│   └── uploads/                  # Temp upload folder (auto-created)
 │
 ├── src/
-│   ├── App.jsx                  # Frontend entry point
+│   ├── App.jsx                   # Frontend entry point
 │   ├── components/
-│   │   ├── DocumentUpload.jsx   # Stub: implement drag/drop + file picker
-│   │   └── DataDisplay.jsx      # Stub: implement structured JSON display
-│   └── App.css                  # Basic global styles
+│   │   ├── DocumentUpload.jsx    # Component to handle file upload
+│   │   └── DataDisplay.jsx       # Component to show extracted information (incomplete, needs you to finish)
+│   └── App.css                   # Basic global styles
 │
 ├── package.json
-└── insurance_document.pdf       # Test insurance document
+└── insurance_document.pdf        # Test insurance document
 
 ```
 
 ---
+## Before Start
 
-## Backend (`server/index.js`)
+Before running the backend, you need to set up access to LlamaIndex Cloud.
 
-The backend is a **minimal Express server**.  
+1. Go to [https://cloud.llamaindex.ai/](https://cloud.llamaindex.ai/) and sign up or log in.
+2. Navigate to your **API Keys** page and create a new key.
+3. In the `server/` folder, create a new `.env` file with the following content:
 
-It currently:
-- Sets up `/api/process` route (but just returns “Not Implemented”).  
-- Accepts file uploads via `multer`.  
-- Leaves **TODOs** for you to complete the pipeline:
-  - **LlamaParse**: upload → poll → fetch Markdown.  
-  - **Files API** (if needed): upload parsed text.  
-  - **LlamaExtract**: start extraction job with schema.  
-  - Poll extraction → normalize results → return JSON.  
+```
+PORT=4000
+LLAMACLOUD_BASE_URL=https://api.cloud.llamaindex.ai
+LLAMACLOUD_API_KEY=<your-api-key-here>
+EXTRACTION_SCHEMA_PATH=schema/insurance.schema.json
+```
 
-### What you must implement:
-- Read the schema JSON:
-  ```js
-  // TODO[schema-1]
-  extractionSchema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'))
-  ```
-- `/api/process` route:
-  - Upload file → LlamaParse → wait for parse → get Markdown.
-  - Upload Markdown (if required by tenant).
-  - Start LlamaExtract job with `insurance.schema.json`.
-  - Poll until SUCCESS.
-  - Normalize the result (`result | data | results[0].result | download_url`).
-  - Return:  
-    ```json
-    { "ok": true, "extractedData": { ...matches schema... } }
-    ```
+Replace `<your-api-key-here>` with the actual key you generated.
 
-**Important:** No LlamaIndex API endpoints are provided.  
-You must look them up in [LlamaCloud Docs](https://docs.cloud.llamaindex.ai/) and implement calls yourself.
+> 📁 Note: The `.env` file is **not included** in the repo — you must create it yourself before running the backend.
 
+Once your `.env` file is in place, you can start the project as described below.
+
+---
+## Backend (`fastapi_server/main.py`)
+
+The backend is a **minimal FastAPI server**.  It currently sets up `/api/process` route but only returns “Not Implemented” for now.  
+
+### What you need to implement:
+- Use LlamaParse AND LlamaExtract to process uploaded files
+- Return Data in the format defined in `insurance.schema.json`
 ---
 
 ## Frontend (`src/`)
 
-The frontend is built with React + Vite.  
-Currently, it has **stub components** that you must finish.
+The frontend is built with **React + Vite**, and provides a basic UI scaffold.
 
-### `src/App.jsx`
-- Holds main app state:
-  - `uploadedFile`, `processing`, `error`, `extractedData`.
-- Has a stub `handleFileUpload(file)` → you must connect it to your backend (`POST /api/process`).
+### What's already implemented
 
-### `src/components/DocumentUpload.jsx`
-- UI for uploading files.
-- Must implement:
-  - Drag-and-drop.
-  - Click-to-browse.
-  - File validation (PDF/DOCX/PPTX, ≤10 MB).
-  - Show upload progress + success state.
-- Calls `onFileUpload(file)` when ready.
+- `src/App.jsx`  
+  - Manages app state: `uploadedFile`, `processing`, `error`, `extractedData`  
+  - Handles the API call to `/api/process`
 
-### `src/components/DataDisplay.jsx`
-- UI for showing backend results.
-- Must implement:
-  - Loading state.
-  - Error state.
-  - Render extracted JSON nicely (tables, cards, etc.).
-- Input: `extractedData` that matches the schema.
+- `src/components/DocumentUpload.jsx`  
+  - Provides the file upload interface  
+  - Triggers `onFileUpload(file)` when a file is selected  
+
+You do not need to modify these files.
+
+### What you need to implement
+
+#### `src/components/DataDisplay.jsx`
+
+This component is responsible for rendering the extracted data returned from the backend.
+
+You’ll receive a prop called `extractedData` (a JSON object), and your task is to display it in a clear, readable format.
+
+You can choose how to present the data:
+- A raw `<pre>{JSON.stringify(data, null, 2)}</pre>` block
+- A recursive JSON viewer
+- A field-by-field layout, grouping related values
+
+There is no strict requirement on styling — focus on **clarity**, **completeness**, and **usability**.
 
 ---
 
-## JSON Schema
+## JSON & API Schema
 
-The schema lives at:
+The JSON schema is provided at:
 
 ```
-server/schema/extractionSchema.json
+server/schema/insurance.schema.json
 ```
 
-You **must** load this in your backend before extraction.  
-It defines the shape of the expected JSON
+This file defines the **structure of the extracted information** your backend must return. It includes fields such as `policy.number`, `effective_date`, `insureds`, `coverages`, and more.
 
+Your backend must:
+- ✅ **Load this schema** on startup (already scaffolded in `main.py`)  
+- ✅ **Pass the schema** to LlamaExtract during the extraction process  
+- ✅ **Return the extracted data** in the format defined by this schema
+
+This extracted data should be returned inside the `extractedData` field of your API response. The full API response is shaped by the `ProcessResponse` model:
+
+```python
+class ProcessResponse(BaseModel):
+    ok: bool
+    extractedData: Optional[dict]
+    error: Optional[str]
+```
+
+- `ok`: indicates whether the extraction succeeded  
+- `extractedData`: must conform exactly to `insurance.schema.json`  
+- `error`: includes any error message if the extraction failed
+
+⚠️ **Important:** Do **not modify the schema file**. Your output will be validated against it, and any structural mismatch will result in test failures — even if the logic is correct.
+
+---
 
 ## Getting Started
 
@@ -122,8 +158,13 @@ npm install
 
 ### 2. Start backend
 ```bash
-cd server
-node index.js
+cd fastapi_server
+# recommended but not required
+python3 -m venv venv
+source venv/bin/activate
+# install dependencies and run backend
+pip install -r server/requirements.txt
+uvicorn main:app --reload --port 4000
 ```
 Runs at `http://localhost:4000`.
 
@@ -153,13 +194,10 @@ Runs at `http://localhost:5173`.
    - Good error/loading states  
    - JSON displayed clearly  
 
-3. **Code Quality (20%)**  
-   - Clear, modular code  
+3. **Code & Documentation Quality (30%)**  
+   - Modular, easy-to-understand code  
    - Good error handling  
-
-4. **Documentation (10%)**  
-   - Clear commits + comments  
-   - Updated README  
+   - Clear documentation when necessary
 
 ---
 
@@ -169,15 +207,4 @@ Runs at `http://localhost:5173`.
 - [LlamaExtract](https://www.llamaindex.ai/llamaextract)  
 - [LlamaCloud](https://docs.cloud.llamaindex.ai/)  
 - [React Docs](https://react.dev/)  
-
----
-
-## Key Notes
-- **Do not change the schema shape** 
-- The backend currently just stubs `/api/process`.  
-- You must look up the correct API endpoints from docs and implement.  
-- You are graded on: **working code, clean design, and clear problem-solving**.  
-
----
-
-This project is provided for **assessment purposes only**.
+- [FastAPI Docs](https://fastapi.tiangolo.com/)

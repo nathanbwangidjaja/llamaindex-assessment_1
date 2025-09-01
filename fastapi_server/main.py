@@ -54,7 +54,7 @@ try:
 except Exception as e:
     print(f"⚠️  Failed to load schema from {SCHEMA_PATH}: {e}")
 
-# =============================== MODELS ======================================
+# =============================== MODELS (DO NOT CHANGE) ======================================
 class HealthSchemaResponse(BaseModel):
     ok: bool
     schemaPath: Optional[str] = None
@@ -64,7 +64,6 @@ class ProcessResponse(BaseModel):
     ok: bool
     extractedData: Optional[dict] = None
     error: Optional[str] = None
-    # next_steps: Optional[list[str]] = None
 
 # ================================= ROUTES ====================================
 
@@ -95,7 +94,7 @@ async def process(file: UploadFile = File(...)):
 
     # ======= TODOs: Extract ============
     # Requirement: 
-    # 1) Use LlamaParse AND LlamaExtract to process files
+    # 1) Use LlamaParse AND LlamaExtract to process uploaded files
     # 2) Return Data in the format defined in {SCHEMA_PATH}
 
     # --- Placeholder so the route is callable for demostration:
