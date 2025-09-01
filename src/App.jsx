@@ -13,7 +13,7 @@ function App() {
   const [extractedData, setExtractedData] = useState(null)
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState(null)
-  const [currentStep, setCurrentStep] = useState(1)
+  // const [currentStep, setCurrentStep] = useState(1)
 
   /**
    * Called by candidate's DocumentUpload implementation once a file is chosen.
@@ -24,7 +24,7 @@ function App() {
     setExtractedData(null)
     setProcessing(true)
     setError(null)
-    setCurrentStep(2)
+    // setCurrentStep(2)
 
     try {
       // ===== TODO =====
@@ -57,7 +57,6 @@ function App() {
     setExtractedData(null)
     setProcessing(false)
     setError(null)
-    setCurrentStep(1)
   }
 
   return (

@@ -77,7 +77,7 @@ class ProcessResponse(BaseModel):
     ok: bool
     extractedData: Optional[dict] = None
     error: Optional[str] = None
-    next_steps: Optional[list[str]] = None
+    # next_steps: Optional[list[str]] = None
 
 # ================================= ROUTES ====================================
 
@@ -107,8 +107,9 @@ async def process(file: UploadFile = File(...)):
     finally:
         await file.close()
 
+    ###### DO NOT CHANGE ANYTHING ABOVE ######
+
     # ======= TODOs: Implement LlamaParse → LlamaExtract end-to-end ============
-    # You can keep these calls 1:1 with your Node TODO list:
     # 1) Upload to LlamaParse
     # 2) Poll until parsed
     # 3) Fetch Markdown text
@@ -123,12 +124,6 @@ async def process(file: UploadFile = File(...)):
     return ProcessResponse(
         ok=False,
         error="Not Implemented",
-        next_steps=[
-            "Implement LlamaParse upload + polling",
-            "Fetch Markdown text",
-            "Run LlamaExtract with your JSON schema",
-            "Normalize result and return { ok: true, extractedData }",
-        ],
     )
 
 # ============================== SERVER START =================================
