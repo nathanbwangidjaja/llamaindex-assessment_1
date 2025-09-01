@@ -106,18 +106,12 @@ async def process(file: UploadFile = File(...)):
     finally:
         await file.close()
 
-    # ======= TODOs: Implement LlamaParse → LlamaExtract end-to-end ============
-    # 1) Upload to LlamaParse
-    # 2) Poll until parsed
-    # 3) Fetch Markdown text
-    # 4) Upload text to Files API (if required) or use direct text
-    # 5) Get default extraction agent
-    # 6) Start extraction job with data_schema_override
-    # 7) Poll extraction job to SUCCESS
-    # 8) Normalize result shape
-    # 9) Return { ok, extractedData }
+    # ======= TODOs: Extract ============
+    # Requirement: 
+    # 1) Use LlamaParse AND LlamaExtract to process files
+    # 2) Return Data in the format defined in {SCHEMA_PATH}
 
-    # --- Placeholder so the route is callable during development:
+    # --- Placeholder so the route is callable for demostration:
     return ProcessResponse(
         ok=False,
         error="Not Implemented",
