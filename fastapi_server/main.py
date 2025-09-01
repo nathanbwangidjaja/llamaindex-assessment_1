@@ -10,19 +10,6 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-from helpers.llama import (
-    # TODOs map to your Node TODOs; keep names similar
-    llamaparse_upload,
-    llamaparse_poll_until_done,
-    llamaparse_fetch_markdown,
-    files_upload_text,              # if your tenant requires a Files API
-    get_default_extraction_agent,
-    start_extraction_job,
-    poll_extraction_until_done,
-    fetch_extraction_result,
-)
-from helpers.polling import Timeout
-
 load_dotenv()
 
 # ============================== ENV / CONSTANTS ==============================
