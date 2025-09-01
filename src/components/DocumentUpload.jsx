@@ -82,9 +82,9 @@ const DocumentUpload = ({ onFileUpload, disabled, uploadedFile }) => {
 
   return (
     <div>
-      <div className="rounded-lg border p-6 text-sm text-gray-700 mb-5">
+      {/* <div className="rounded-lg border p-6 text-sm text-gray-700 mb-5">
         <strong>TODO:</strong> Implement "/api/process" for file processing.
-      </div>
+      </div> */}
 
       <div
         className={`

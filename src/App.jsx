@@ -138,49 +138,6 @@ function App() {
           </Card>
         </div>
 
-        {/* Technical Information */}
-        {/* <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Assessment Overview (Feel free to keep this section in your submission)</CardTitle>
-            <CardDescription>
-              You are invited to accomplish the following tasks:
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Upload className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="font-semibold mb-2">Frontend Implementation</h3>
-                <p className="text-sm text-gray-600">
-                  Drag-and-drop UI for file upload + structured presentation for extracted data
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Database className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="font-semibold mb-2">Backend & Database</h3>
-                <p className="text-sm text-gray-600">
-                  Build API routes for upload & processing; persist results (DB optional but encouraged).
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <FileText className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="font-semibold mb-2">LlamaIndex Integration</h3>
-                <p className="text-sm text-gray-600">
-                  Use LlamaParse + LlamaExtract on the backend; return structured JSON.
-                </p>
-              </div>
-
-            </div>
-          </CardContent>
-        </Card> */}
       </div>
     </div>
   )
