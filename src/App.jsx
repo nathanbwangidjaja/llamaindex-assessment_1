@@ -64,12 +64,12 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto">
         <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2 mt-5">
             LlamaIndex Insurance Document Processor
           </h1>
-          <p className="text-lg text-gray-600">
+          {/* <p className="text-lg text-gray-600">
             Candidates must build the upload & extraction flow
-          </p>
+          </p> */}
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -146,9 +146,9 @@ function App() {
         {/* Technical Information */}
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle>Assessment Technical Requirements</CardTitle>
+            <CardTitle>Assessment Overview (Feel free to keep this section in your submission)</CardTitle>
             <CardDescription>
-              Candidates must implement both frontend & backend
+              You are invited to accomplish the following tasks:
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -159,7 +159,17 @@ function App() {
                 </div>
                 <h3 className="font-semibold mb-2">Frontend Implementation</h3>
                 <p className="text-sm text-gray-600">
-                  Drag-and-drop upload and responsive UI.
+                  Drag-and-drop UI for file upload + structured presentation for extracted data
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Database className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="font-semibold mb-2">Backend & Database</h3>
+                <p className="text-sm text-gray-600">
+                  Build API routes for upload & processing; persist results (DB optional but encouraged).
                 </p>
               </div>
 
@@ -173,15 +183,6 @@ function App() {
                 </p>
               </div>
 
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Database className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="font-semibold mb-2">Backend & Database</h3>
-                <p className="text-sm text-gray-600">
-                  Build API routes for upload & processing; persist results (DB optional but encouraged).
-                </p>
-              </div>
             </div>
           </CardContent>
         </Card>
