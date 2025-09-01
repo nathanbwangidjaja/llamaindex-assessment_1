@@ -107,8 +107,6 @@ async def process(file: UploadFile = File(...)):
     finally:
         await file.close()
 
-    ###### DO NOT CHANGE ANYTHING ABOVE ######
-
     # ======= TODOs: Implement LlamaParse → LlamaExtract end-to-end ============
     # 1) Upload to LlamaParse
     # 2) Poll until parsed

@@ -27,28 +27,24 @@ function App() {
     // setCurrentStep(2)
 
     try {
-      // ===== TODO =====
-      // 1) Upload the file to your backend or via presigned URL (multipart ok).
-      // 2) Trigger LlamaParse + LlamaExtract processing on the backend.
-      // 3) Poll or await the result and return structured JSON (see README schema).
-      //
-      // Example (pseudo):
-      // const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData })
-      // const { fileId } = await uploadRes.json()
-      // const parseRes = await fetch(`/api/process/${fileId}`)
-      // const result = await parseRes.json()
-      //
-      // setExtractedData(result)
+      const form = new FormData();
+      form.append('file', file);
 
-      // Remove this throw once implemented:
-      throw new Error('Not implemented: connect frontend to your backend processing pipeline.')
+      const resp = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/process?parse_then_extract=1`,
+        { method: 'POST', body: form }
+      );
 
-      // If implemented:
-      // setCurrentStep(6)
-    } catch (err) {
-      setError(err?.message || 'Unknown error')
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok || !data?.ok) {
+        throw new Error(data?.error || `Server error: ${resp.status}`);
+      }
+
+      setExtractedData(data.extractedData);
+    } catch (e) {
+      setError(e.message || 'Upload/processing failed');
     } finally {
-      setProcessing(false)
+      setProcessing(false);
     }
   }
 
@@ -143,7 +139,7 @@ function App() {
         </div>
 
         {/* Technical Information */}
-        <Card className="mt-8">
+        {/* <Card className="mt-8">
           <CardHeader>
             <CardTitle>Assessment Overview (Feel free to keep this section in your submission)</CardTitle>
             <CardDescription>
@@ -184,7 +180,7 @@ function App() {
 
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   )
