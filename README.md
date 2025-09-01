@@ -32,7 +32,7 @@ Most of the heavy lifting is left for you to implement — this README will walk
 
 ```
 .
-├── server/
+├── fastapi_server/
 │   ├── main.py                   # Backend FastAPI server (incomplete, needs you to finish)
 │   ├── schema/
 │   │   └── insurance.schema.json # JSON Schema you will use for extraction
