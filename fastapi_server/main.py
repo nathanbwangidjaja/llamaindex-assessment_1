@@ -99,7 +99,6 @@ async def process(file: UploadFile = File(...)):
             detail=f"Extraction schema not loaded. Implement schema load at {SCHEMA_PATH}."
         )
 
-    # Save to disk (mirrors multer's behavior)
     dest_path = UPLOAD_DIR / file.filename
     try:
         with dest_path.open("wb") as out:
