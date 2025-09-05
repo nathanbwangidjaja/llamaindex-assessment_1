@@ -12,13 +12,6 @@
       ],
       "description": "Type of document detected"
     },
-    "source": {
-      "type": "object",
-      "properties": {
-        "file_name": { "type": "string" },
-        "pages": { "type": "integer", "minimum": 1 }
-      }
-    },
     "policy": {
       "type": "object",
       "required": ["number", "effective_date", "expiration_date"],
