@@ -37,6 +37,10 @@ Most of the heavy lifting is left for you to implement — this README will walk
 │   ├── schema/
 │   │   └── insurance.schema.json # JSON Schema you will use for extraction
 │   ├── (.env)                    # To be created by yourself
+│   └── answers/                  # JSON answers for each document will be placed here
+│   │   └── document_1.json       # JSON final output MUST be placed here
+│   │   └── document_2.json       # JSON final output MUST be placed here
+│   │   └── ...                   # Continue for all 10 JSON files
 │   └── uploads/                  # Temp upload folder (auto-created)
 │
 ├── src/
@@ -44,10 +48,13 @@ Most of the heavy lifting is left for you to implement — this README will walk
 │   ├── components/
 │   │   ├── DocumentUpload.jsx    # Component to handle file upload
 │   │   └── DataDisplay.jsx       # Component to show extracted information (incomplete, needs you to finish)
+│   └── documents/                # Insurance documents contained in this folder
+│   │   └── document_1.pdf        # First insurance document
+│   │   └── document_2.pdf
+│   │   └── ...
 │   └── App.css                   # Basic global styles
 │
 ├── package.json
-└── insurance_document.pdf        # Test insurance document
 
 ```
 
@@ -116,6 +123,12 @@ There is no strict requirement on styling — focus on **clarity**, **completene
 
 ---
 
+## Answers
+
+The `/answers` folder contains JSON files (`document_1.json` … `document_10.json`) corresponding to the documents in `/documents`. You must place your extracted final answers inside these existing JSON files.  Do not add, rename, or remove any files from this folder.
+
+---
+
 ## JSON & API Schema
 
 The JSON schema is provided at:
@@ -129,7 +142,7 @@ This file defines the **structure of the extracted information** your backend mu
 Your backend must:
 - ✅ **Load this schema** on startup (already scaffolded in `main.py`)  
 - ✅ **Pass the schema** to LlamaExtract during the extraction process  
-- ✅ **Return the extracted data** in the format defined by this schema
+- ✅ **Return the extracted data** in the format defined by this schema and must also return the JSON output in the `answers/` folder
 
 This extracted data should be returned inside the `extractedData` field of your API response. The full API response is shaped by the `ProcessResponse` model:
 
@@ -182,7 +195,7 @@ Runs at `http://localhost:5173`.
 - Backend: Implement `/api/process` end-to-end with LlamaParse + LlamaExtract.
 - Frontend: Implement upload UI & JSON display UI.
 - Schema: Ensure extraction matches `extractionSchema.json`.
-- Testing: Use `insurance_document.pdf` for testing
+- Testing: Final JSON output for each extracted document must be placed in the `/answers` folder
 
 ### Evaluation
 1. **Backend (40%)**  
